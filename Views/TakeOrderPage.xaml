@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:converters="clr-namespace:VentasApp.Converters"
+             xmlns:models="clr-namespace:VentasApp.Models"
+             xmlns:vm="clr-namespace:VentasApp.ViewModels"
+             x:Class="VentasApp.Views.TakeOrderPage"
+             Title="{Binding Title}">
+             
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converters:ImagePathConverter x:Key="ImagePathConv" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <ScrollView>
+        <VerticalStackLayout Spacing="15" Padding="20">
+            <Label Text="Cliente:" FontAttributes="Bold" />
+            <Picker ItemsSource="{Binding AvailableCustomers}" 
+                    SelectedItem="{Binding SelectedCustomer}"
+                    ItemDisplayBinding="{Binding Name}"
+                    Title="Seleccione un cliente..." />
+
+            <Label Text="Vendedor:" FontAttributes="Bold" Margin="0,10,0,0"/>
+            <Picker ItemsSource="{Binding AvailableVendedores}" 
+                    SelectedItem="{Binding SelectedVendedor}"
+                    ItemDisplayBinding="{Binding Nombre}"
+                    Title="Seleccione un vendedor..." />
+
+            <Label Text="Producto:" FontAttributes="Bold" Margin="0,15,0,0"/>
+            
+            <Grid ColumnDefinitions="*, Auto" ColumnSpacing="10">
+                <SearchBar Grid.Column="0" 
+                           Placeholder="Buscar por nombre o código..." 
+                           Text="{Binding SearchText}"
+                           SearchCommand="{Binding SearchProductCommand}"
+                           TextChanged="OnSearchTextChanged" />
+                <Button Grid.Column="1" 
+                        Text="📷" 
+                        Command="{Binding ScanCommand}" 
+                        FontSize="22"
+                        BackgroundColor="{StaticResource Secondary}"
+                        TextColor="White"
+                        WidthRequest="50" />
+            </Grid>
+
+            <!-- Resultados de Búsqueda (Sugerencias) -->
+            <CollectionView ItemsSource="{Binding SearchResults}" 
+                            IsVisible="{Binding SearchResults.Count, Converter={StaticResource NullToBoolConverter}, ConverterParameter=Inverted}"
+                            HeightRequest="150"
+                            Margin="0,0,0,10">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="models:Product">
+                        <Grid ColumnDefinitions="Auto, *" Padding="5" ColumnSpacing="10">
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup Name="CommonStates">
+                                    <VisualState Name="Normal" />
+                                    <VisualState Name="Selected">
+                                        <VisualState.Setters>
+                                            <Setter Property="BackgroundColor" Value="#E0E0E0" />
+                                        </VisualState.Setters>
+                                    </VisualState>
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                            <Label Grid.Column="0" Text="{Binding Barcode}" FontSize="12" TextColor="Gray" VerticalOptions="Center" />
+                            <Label Grid.Column="1" Text="{Binding Name}" FontAttributes="Bold" VerticalOptions="Center" />
+                            
+                            <Grid.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:TakeOrderViewModel}}, Path=SelectProductCommand}" 
+                                                      CommandParameter="{Binding .}" />
+                            </Grid.GestureRecognizers>
+                        </Grid>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+            <!-- Producto Seleccionado -->
+            <Frame BackgroundColor="#FDF2F8" 
+                   BorderColor="{StaticResource Secondary}" 
+                   Padding="15" 
+                   IsVisible="{Binding SelectedProduct, Converter={StaticResource NullToBoolConverter}, ConverterParameter=Inverted}">
+                <Grid ColumnDefinitions="*, Auto">
+                    <VerticalStackLayout Grid.Column="0">
+                        <Label Text="Producto Seleccionado:" FontSize="12" TextColor="Gray" />
+                        <Label Text="{Binding SelectedProduct.Name}" FontAttributes="Bold" FontSize="18" />
+                        <Label Text="{Binding SelectedProduct.Price, StringFormat='Precio: {0:C}'}" FontSize="14" />
+                    </VerticalStackLayout>
+                    <Label Grid.Column="1" 
+                           Text="{Binding SelectedProduct.Stock, StringFormat='Stock: {0}'}" 
+                           VerticalOptions="Center" 
+                           TextColor="{StaticResource Primary}" />
+                </Grid>
+            </Frame>
+
+            <Grid ColumnDefinitions="*,*" ColumnSpacing="15">
+                <VerticalStackLayout Grid.Column="0">
+                    <Label Text="Cantidad:" FontAttributes="Bold"/>
+                    <Entry Text="{Binding Quantity}" Keyboard="Numeric" />
+                </VerticalStackLayout>
+                <Button Grid.Column="1" 
+                        Text="Agregar" 
+                        Command="{Binding AddProductCommand}" 
+                        BackgroundColor="{StaticResource Success}"
+                        TextColor="White"
+                        VerticalOptions="End" />
+            </Grid>
+
+            <Label Text="Detalle del Pedido:" FontAttributes="Bold" Margin="0,15,0,0" />
+            
+            <CollectionView ItemsSource="{Binding OrderItems}" SelectionMode="None" HeightRequest="250">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Grid ColumnDefinitions="50, *, Auto, Auto" Padding="5,10" >
+                            <Image Grid.Column="0" 
+                                   Source="{Binding Product.ImageUrl, Converter={StaticResource ImagePathConv}}" 
+                                   WidthRequest="40" HeightRequest="40" 
+                                   Aspect="AspectFill" 
+                                   VerticalOptions="Center" />
+                                   
+                            <Label Grid.Column="1" Text="{Binding Product.Name}" VerticalOptions="Center" Margin="10,0,0,0" />
+                            <Label Grid.Column="2" Text="{Binding Quantity, StringFormat='{} x {0}'}" VerticalOptions="Center" Margin="10,0"/>
+                            <ImageButton Grid.Column="3" 
+                                         Source="dotnet_bot.png"
+                                         BackgroundColor="Red"
+                                         Command="{Binding Source={RelativeSource AncestorType={x:Type CollectionView}}, Path=BindingContext.RemoveProductCommand}"
+                                         CommandParameter="{Binding .}"
+                                         HeightRequest="30" WidthRequest="30" CornerRadius="15"/>
+                            <!-- Nota: Usamos una imagen genérica pero el botón sirve para eliminar la línea -->
+                        </Grid>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+            <Label Text="{Binding TotalAmount, StringFormat='Total: {0:C}'}" 
+                   FontSize="22" 
+                   FontAttributes="Bold" 
+                   HorizontalOptions="End" />
+
+            <Button Text="Guardar Pedido" 
+                    Command="{Binding SaveOrderCommand}" 
+                    CornerRadius="10" 
+                    BackgroundColor="{StaticResource Primary}" 
+                    TextColor="White" 
+                    Margin="0,20,0,0"/>
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>

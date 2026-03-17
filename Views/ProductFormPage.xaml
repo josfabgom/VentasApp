@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:converters="clr-namespace:VentasApp.Converters"
+             x:Class="VentasApp.Views.ProductFormPage"
+             Title="{Binding Title}">
+             
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converters:ImagePathConverter x:Key="ImagePathConv" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="15">
+
+            <Label Text="Nombre:" FontAttributes="Bold" />
+            <Entry Text="{Binding Name}" Placeholder="Ingrese el nombre" />
+
+            <Label Text="Descripción:" FontAttributes="Bold" />
+            <Entry Text="{Binding Description}" Placeholder="Ingrese descripción pequeña" />
+
+            <Grid ColumnDefinitions="*,*" ColumnSpacing="15">
+                <VerticalStackLayout Grid.Column="0">
+                    <Label Text="Precio:" FontAttributes="Bold" />
+                    <Entry Text="{Binding Price}" Keyboard="Numeric" />
+                </VerticalStackLayout>
+                <VerticalStackLayout Grid.Column="1">
+                    <Label Text="Stock:" FontAttributes="Bold" />
+                    <Entry Text="{Binding Stock}" Keyboard="Numeric" />
+                </VerticalStackLayout>
+            </Grid>
+
+            <Label Text="Código de Barras:" FontAttributes="Bold" />
+            <Entry Text="{Binding Barcode}" Placeholder="Escanear o ingresar" />
+
+            <Label Text="Código QR:" FontAttributes="Bold" />
+            <Entry Text="{Binding QrCode}" Placeholder="Asociar QR" />
+
+            <Label Text="Imagen del Producto:" FontAttributes="Bold" />
+            <Grid ColumnDefinitions="*, Auto" ColumnSpacing="10">
+                <Entry Grid.Column="0" Text="{Binding ImageUrl}" Placeholder="Ejemplo: producto.png o ruta" />
+                <Button Grid.Column="1" Text="Cargar..." Command="{Binding PickImageCommand}" BackgroundColor="#2E8BC0" TextColor="White" />
+            </Grid>
+            <!-- Vista previa de la imagen -->
+            <Image Source="{Binding ImageUrl, Converter={StaticResource ImagePathConv}}" 
+                   HeightRequest="250" 
+                   Aspect="AspectFit" 
+                   BackgroundColor="Transparent"
+                   Margin="0,10,0,0"/>
+
+            <Button Text="Guardar Producto"  
+                    Command="{Binding SaveContactCommand}" 
+                    BackgroundColor="Green" 
+                    TextColor="White" 
+                    CornerRadius="10" 
+                    Margin="0,20,0,0" />
+
+            <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" HorizontalOptions="Center" />
+            
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>

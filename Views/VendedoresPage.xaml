@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="using:VentasApp.ViewModels"
+             xmlns:models="using:VentasApp.Models"
+             x:Class="VentasApp.Views.VendedoresPage"
+             Title="{Binding Title}">
+
+    <Grid RowDefinitions="Auto, *, Auto" Padding="20">
+        <!-- Formulario (Arriba) -->
+        <VerticalStackLayout Grid.Row="0" Spacing="10" Margin="0,0,0,20">
+            <Label Text="Gestionar Vendedor" FontAttributes="Bold" FontSize="18"/>
+            <Entry Placeholder="Nombre" Text="{Binding SelectedVendedor.Nombre}" />
+            <Entry Placeholder="Email" Text="{Binding SelectedVendedor.Email}" Keyboard="Email" />
+            <Entry Placeholder="Teléfono" Text="{Binding SelectedVendedor.Telefono}" Keyboard="Telephone" />
+            <Button Text="Guardar Vendedor" Command="{Binding SaveVendedorCommand}" />
+        </VerticalStackLayout>
+
+        <!-- Lista (Centro) -->
+        <CollectionView Grid.Row="1" ItemsSource="{Binding Vendedores}">
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="models:Vendedor">
+                    <Frame Margin="0,5" Padding="10">
+                        <Grid ColumnDefinitions="*, Auto">
+                            <VerticalStackLayout Grid.Column="0">
+                                <Label Text="{Binding Nombre}" FontAttributes="Bold" />
+                                <Label Text="{Binding Email}" FontSize="12" TextColor="Gray" />
+                            </VerticalStackLayout>
+                            <HorizontalStackLayout Grid.Column="1" Spacing="10">
+                                <Button Text="Editar" 
+                                        FontSize="12"
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type vm:VendedoresViewModel}}, Path=EditVendedorCommand}" 
+                                        CommandParameter="{Binding .}" />
+                                <Button Text="X" 
+                                        BackgroundColor="Red" 
+                                        FontSize="12"
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type vm:VendedoresViewModel}}, Path=DeleteVendedorCommand}" 
+                                        CommandParameter="{Binding .}" />
+                            </HorizontalStackLayout>
+                        </Grid>
+                    </Frame>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </Grid>
+</ContentPage>

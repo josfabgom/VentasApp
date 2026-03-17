@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="VentasApp.Views.OrdersPage"
+             Title="{Binding Title}">
+
+    <Grid RowDefinitions="Auto, *">
+        <HorizontalStackLayout Grid.Row="0" HorizontalOptions="Center" Spacing="20" Padding="10">
+            <Label Text="■ Por Facturar / Historial" TextColor="{StaticResource Primary}" FontAttributes="Bold" />
+            <Label Text="■ Solo Facturadas" TextColor="Green" FontAttributes="Bold" />
+        </HorizontalStackLayout>
+        
+        <RefreshView Grid.Row="1" Command="{Binding LoadOrdersCommand}" IsRefreshing="{Binding IsBusy}">
+            <ScrollView>
+                <VerticalStackLayout>
+                    <Label Text="Historial de Órdenes / Por Facturar" FontAttributes="Bold" FontSize="18" Margin="10,10,0,0"/>
+
+                    <CollectionView ItemsSource="{Binding Orders}" 
+                                    SelectionMode="None"
+                                    Margin="10">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <Frame CornerRadius="10" 
+                                       Margin="5,5,5,15" 
+                                       Padding="15" 
+                                       HasShadow="True">
+                                    <StackLayout>
+                                        <Grid ColumnDefinitions="*, Auto">
+                                            <Label Grid.Column="0" Text="{Binding Customer.Name}" FontAttributes="Bold" FontSize="18"/>
+                                            <Label Grid.Column="1" Text="{Binding Status}" TextColor="{StaticResource Primary}" FontAttributes="Bold" />
+                                        </Grid>
+
+                                        <Label Text="{Binding Date, StringFormat='Fecha: {0:d}'}" TextColor="Gray"/>
+                                        <Label Text="{Binding TotalAmount, StringFormat='Total: {0:C}'}" FontAttributes="Bold" FontSize="16" Margin="0,5,0,0"/>
+                                        
+                                        <Label Text="Productos:" Margin="0,5,0,0" FontAttributes="Bold"/>
+                                        <Label Text="{Binding Items.Count, StringFormat='Total items: {0}'}" />
+                                        <Label Text="{Binding DeliveryStatus, StringFormat='Entrega: {0}'}" TextColor="Purple" FontAttributes="Bold" />
+
+                                        <Grid ColumnDefinitions="*,*" ColumnSpacing="10" Margin="0,10,0,0">
+                                            <Button Grid.Column="0" 
+                                                    Text="Facturar" 
+                                                    Command="{Binding Source={RelativeSource AncestorType={x:Type CollectionView}}, Path=BindingContext.InvoiceOrderCommand}"
+                                                    CommandParameter="{Binding .}"
+                                                    BackgroundColor="Green"
+                                                    CornerRadius="5"
+                                                    HeightRequest="40" />
+                                            
+                                            <Button Grid.Column="1" 
+                                                    Text="Cancelar" 
+                                                    Command="{Binding Source={RelativeSource AncestorType={x:Type CollectionView}}, Path=BindingContext.CancelOrderCommand}"
+                                                    CommandParameter="{Binding .}"
+                                                    BackgroundColor="Red"
+                                                    CornerRadius="5"
+                                                    HeightRequest="40" />
+                                        </Grid>
+                                    </StackLayout>
+                                </Frame>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                        <CollectionView.EmptyView>
+                            <Label Text="No hay pedidos" HorizontalOptions="Center" VerticalOptions="Center"/>
+                        </CollectionView.EmptyView>
+                    </CollectionView>
+
+                    <Label Text="Órdenes Ya Facturadas (Sólo Lectura)" FontAttributes="Bold" FontSize="18" TextColor="Green" Margin="10,20,0,0"/>
+
+                    <CollectionView ItemsSource="{Binding InvoicedOrders}" 
+                                    SelectionMode="None"
+                                    Margin="10">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <Frame CornerRadius="10" 
+                                       Margin="5,5,5,15" 
+                                       Padding="15" 
+                                       BorderColor="Green"
+                                       HasShadow="False">
+                                    <StackLayout>
+                                        <Grid ColumnDefinitions="*, Auto">
+                                            <Label Grid.Column="0" Text="{Binding Customer.Name}" FontAttributes="Bold" FontSize="16"/>
+                                            <Label Grid.Column="1" Text="{Binding TotalAmount, StringFormat='{0:C}'}" TextColor="Green" FontAttributes="Bold" />
+                                        </Grid>
+                                        <Label Text="{Binding Date, StringFormat='Emitida: {0:g}'}" TextColor="Gray" FontSize="12"/>
+                                    </StackLayout>
+                                </Frame>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </VerticalStackLayout>
+            </ScrollView>
+        </RefreshView>
+    </Grid>
+
+</ContentPage>

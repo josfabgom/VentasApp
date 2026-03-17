@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="using:VentasApp.ViewModels"
+             xmlns:models="using:VentasApp.Models"
+             x:Class="VentasApp.Views.EquiposPage"
+             Title="{Binding Title}">
+
+    <Grid RowDefinitions="Auto, *, Auto" Padding="20">
+        <!-- Formulario (Arriba) -->
+        <VerticalStackLayout Grid.Row="0" Spacing="10" Margin="0,0,0,20">
+            <Label Text="Gestionar Equipo" FontAttributes="Bold" FontSize="18"/>
+            <Entry Placeholder="Nombre del Equipo (ej. PC Gamer)" Text="{Binding SelectedEquipo.Nombre}" />
+            <Entry Placeholder="Tipo (Celular, PC, Tablet)" Text="{Binding SelectedEquipo.Tipo}" />
+            <Entry Placeholder="Nro Serie" Text="{Binding SelectedEquipo.NumeroSerie}" />
+            
+            <Label Text="Asignar Vendedor:" />
+            <Picker ItemsSource="{Binding Vendedores}"
+                    ItemDisplayBinding="{Binding Nombre}"
+                    SelectedItem="{Binding VendedorSeleccionado}" />
+                    
+            <Button Text="Guardar Equipo" Command="{Binding SaveEquipoCommand}" />
+        </VerticalStackLayout>
+
+        <!-- Lista (Centro) -->
+        <CollectionView Grid.Row="1" ItemsSource="{Binding Equipos}">
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="models:Equipo">
+                    <Frame Margin="0,5" Padding="10">
+                        <Grid ColumnDefinitions="*, Auto">
+                            <VerticalStackLayout Grid.Column="0">
+                                <Label Text="{Binding Nombre}" FontAttributes="Bold" />
+                                <HorizontalStackLayout Spacing="5">
+                                    <Label Text="{Binding Tipo}" FontSize="12" TextColor="Gray" />
+                                    <Label Text="|" FontSize="12" TextColor="Gray" />
+                                    <Label Text="{Binding NumeroSerie}" FontSize="12" TextColor="Gray" />
+                                </HorizontalStackLayout>
+                                <Label Text="{Binding Vendedor.Nombre, StringFormat='Vendedor: {0}'}" 
+                                       FontSize="12" 
+                                       TextColor="Teal" 
+                                       IsVisible="{Binding Vendedor, Converter={StaticResource NullToBoolConverter}, ConverterParameter=Inverted}" />
+                            </VerticalStackLayout>
+                            <HorizontalStackLayout Grid.Column="1" Spacing="10">
+                                <Button Text="Editar" 
+                                        FontSize="12"
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type vm:EquiposViewModel}}, Path=EditEquipoCommand}" 
+                                        CommandParameter="{Binding .}" />
+                                <Button Text="X" 
+                                        BackgroundColor="Red" 
+                                        FontSize="12"
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type vm:EquiposViewModel}}, Path=DeleteEquipoCommand}" 
+                                        CommandParameter="{Binding .}" />
+                            </HorizontalStackLayout>
+                        </Grid>
+                    </Frame>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </Grid>
+</ContentPage>

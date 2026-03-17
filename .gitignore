@@ -1,0 +1,38 @@
+# .gitignore for .NET / MAUI
+[Bb]in/
+[Oo]bj/
+.vs/
+.vscode/
+*.user
+*.userosscache
+*.sln.docstates
+.DS_Store
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.db
+*.db-shm
+*.db-wal
+
+# IDE - VS Code
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# IDE - Visual Studio
+.vs/
+
+# Publishing
+publish/
+
+# Logs
+*.log
+build_err.txt
+build_err_customers.txt
+errors.txt
+errors.json
+api_build.log
+build.log

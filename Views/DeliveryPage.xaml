@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="VentasApp.Views.DeliveryPage"
+             Title="{Binding Title}">
+
+    <RefreshView Command="{Binding LoadDeliveriesCommand}" IsRefreshing="{Binding IsBusy}">
+        <CollectionView ItemsSource="{Binding PendingDeliveries}" 
+                        SelectionMode="None"
+                        Margin="10">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Frame CornerRadius="10" 
+                           Margin="5,5,5,15" 
+                           Padding="15" 
+                           BorderColor="#FF9800"
+                           HasShadow="True">
+                        <StackLayout>
+                            <Grid ColumnDefinitions="*, Auto">
+                                <Label Grid.Column="0" Text="{Binding Customer.Name, StringFormat='Cliente: {0}'}" FontAttributes="Bold" FontSize="18"/>
+                                <Label Grid.Column="1" Text="{Binding DeliveryStatus}" TextColor="#FF9800" FontAttributes="Bold" />
+                            </Grid>
+
+                            <Label Text="Artículos a preparar:" FontAttributes="Bold" Margin="0,15,0,5"/>
+                            <CollectionView ItemsSource="{Binding Items}" HeightRequest="100">
+                                <CollectionView.ItemTemplate>
+                                    <DataTemplate>
+                                        <HorizontalStackLayout Spacing="10">
+                                            <Label Text="•" FontAttributes="Bold" />
+                                            <Label Text="{Binding Quantity, StringFormat='{0} x'}" FontAttributes="Bold" />
+                                            <Label Text="{Binding Product.Name}" />
+                                        </HorizontalStackLayout>
+                                    </DataTemplate>
+                                </CollectionView.ItemTemplate>
+                            </CollectionView>
+
+                            <Button Text="Avanzar Fase de Entrega" 
+                                    Command="{Binding Source={RelativeSource AncestorType={x:Type CollectionView}}, Path=BindingContext.NextPhaseCommand}"
+                                    CommandParameter="{Binding .}"
+                                    BackgroundColor="#2E8BC0"
+                                    TextColor="White"
+                                    CornerRadius="5"
+                                    Margin="0,15,0,0"/>
+                        </StackLayout>
+                    </Frame>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+            <CollectionView.EmptyView>
+                <Label Text="No hay pedidos pendientes de preparar" HorizontalOptions="Center" VerticalOptions="Center"/>
+            </CollectionView.EmptyView>
+        </CollectionView>
+    </RefreshView>
+
+</ContentPage>

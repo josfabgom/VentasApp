@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodels="clr-namespace:VentasApp.ViewModels"
+             x:Class="VentasApp.Views.LoginPage"
+             Title="{Binding Title}"
+             Shell.NavBarIsVisible="False">
+
+    <VerticalStackLayout Spacing="25" Padding="30,50" VerticalOptions="Center">
+
+        <Label Text="VentasApp" 
+               FontSize="38" 
+               FontAttributes="Bold" 
+               HorizontalOptions="Center" 
+               TextColor="{StaticResource Primary}"/>
+
+        <Label Text="Ingrese sus credenciales" 
+               FontSize="18" 
+               HorizontalOptions="Center" />
+
+        <Frame HasShadow="True" Padding="20" CornerRadius="15">
+            <VerticalStackLayout Spacing="15">
+                <Entry Placeholder="Usuario/Username" 
+                       Text="{Binding Username}" 
+                       ClearButtonVisibility="WhileEditing"/>
+                
+                <Entry Placeholder="Contraseña/Password" 
+                       Text="{Binding Password}" 
+                       IsPassword="True" 
+                       ClearButtonVisibility="WhileEditing"/>
+
+                <Label Text="{Binding ErrorMessage}" 
+                       TextColor="Red" 
+                       HorizontalOptions="Center"/>
+                <!-- Simplificado IsVisible: binding con Converter o string nulo. En vez de converter, uso triggers en MAUI o DataTriggers, pero dejémoslo simple, lo controlará un converter que no tenemos, mejor bindamos a una prop bool o quitamos eso -->
+                
+                <Button Text="Login" 
+                        Command="{Binding LoginCommand}" 
+                        CornerRadius="10"
+                        Margin="0,15,0,0"/>
+                
+                <ActivityIndicator IsRunning="{Binding IsBusy}" 
+                                   IsVisible="{Binding IsBusy}" 
+                                   HorizontalOptions="Center"/>
+            </VerticalStackLayout>
+        </Frame>
+
+    </VerticalStackLayout>
+
+</ContentPage>

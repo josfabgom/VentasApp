@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:zxing="clr-namespace:ZXing.Net.Maui.Controls;assembly=ZXing.Net.Maui.Controls"
+             x:Class="VentasApp.Views.BarcodeScannerPage"
+             Title="Escanear Código">
+
+    <Grid>
+        <zxing:CameraBarcodeReaderView x:Name="barcodeReader"
+                                       BarcodesDetected="OnBarcodesDetected" />
+        
+        <!-- Overlay -->
+        <BoxView BackgroundColor="#80000000" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" />
+        
+        <Frame BorderColor="White"
+               BackgroundColor="Transparent"
+               WidthRequest="250"
+               HeightRequest="250"
+               HorizontalOptions="Center"
+               VerticalOptions="Center"
+               CornerRadius="0" />
+
+        <VerticalStackLayout VerticalOptions="End" HorizontalOptions="Center" Margin="20">
+            <Button Text="Cancelar" Clicked="OnCancelClicked" BackgroundColor="Red" />
+        </VerticalStackLayout>
+    </Grid>
+
+</ContentPage>

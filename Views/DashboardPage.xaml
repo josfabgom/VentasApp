@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="using:VentasApp.ViewModels"
+             x:Class="VentasApp.Views.DashboardPage"
+             Title="{Binding Title}">
+
+    <ScrollView>
+        <VerticalStackLayout Spacing="20" Padding="20">
+            
+            <!-- Filtros -->
+            <Frame BorderColor="{StaticResource Primary}" Padding="15">
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="Filtros de Reporte" FontAttributes="Bold" FontSize="16" />
+                    
+                    <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                        <VerticalStackLayout Grid.Column="0">
+                            <Label Text="Desde:" FontSize="12" />
+                            <DatePicker Date="{Binding StartDate}" Format="dd/MM/yyyy" />
+                        </VerticalStackLayout>
+                        <VerticalStackLayout Grid.Column="1">
+                            <Label Text="Hasta:" FontSize="12" />
+                            <DatePicker Date="{Binding EndDate}" Format="dd/MM/yyyy" />
+                        </VerticalStackLayout>
+                    </Grid>
+
+                    <Label Text="Vendedor:" FontSize="12" />
+                    <Picker ItemsSource="{Binding AvailableVendedores}"
+                            ItemDisplayBinding="{Binding Nombre}"
+                            SelectedItem="{Binding SelectedVendedor}"
+                            Title="Todos los vendedores" />
+
+                    <Grid ColumnDefinitions="*, Auto" ColumnSpacing="10">
+                        <Button Text="Aplicar Filtros" 
+                                Command="{Binding LoadDashboardCommand}"
+                                BackgroundColor="{StaticResource Primary}" />
+                        <Button Grid.Column="1" 
+                                Text="Limpiar" 
+                                Command="{Binding ClearFiltersCommand}"
+                                BackgroundColor="Gray" />
+                    </Grid>
+                </VerticalStackLayout>
+            </Frame>
+
+            <!-- Resumen General -->
+            <Grid ColumnDefinitions="*,*" ColumnSpacing="15">
+                <Frame Grid.Column="0" BackgroundColor="{AppThemeBinding Light=#E0E7FF, Dark=#1E1B4B}" BorderColor="{StaticResource Primary}" Padding="15">
+                    <VerticalStackLayout HorizontalOptions="Center">
+                        <Label Text="Ventas Totales" FontSize="13" TextColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource Tertiary}}" FontAttributes="Bold" HorizontalOptions="Center" />
+                        <Label Text="{Binding TotalSales, StringFormat='{0:C}'}" 
+                               FontSize="22" FontAttributes="Bold" HorizontalOptions="Center" TextColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource White}}" />
+                    </VerticalStackLayout>
+                </Frame>
+
+                <Frame Grid.Column="1" BackgroundColor="{AppThemeBinding Light=#D1FAE5, Dark=#064E3B}" BorderColor="{StaticResource Success}" Padding="15">
+                    <VerticalStackLayout HorizontalOptions="Center">
+                        <Label Text="Nro. Pedidos" FontSize="13" TextColor="{AppThemeBinding Light={StaticResource Success}, Dark={StaticResource Success}}" FontAttributes="Bold" HorizontalOptions="Center" />
+                        <Label Text="{Binding TotalOrders}" 
+                               FontSize="22" FontAttributes="Bold" HorizontalOptions="Center" TextColor="{AppThemeBinding Light={StaticResource Success}, Dark={StaticResource White}}" />
+                    </VerticalStackLayout>
+                </Frame>
+            </Grid>
+
+            <!-- Listado por Vendedor -->
+            <Label Text="Desempeño por Vendedor" FontAttributes="Bold" FontSize="18" Margin="0,10,0,0" />
+            
+            <CollectionView ItemsSource="{Binding SalesPerVendedor}">
+                <CollectionView.Header>
+                    <Grid ColumnDefinitions="*, Auto, Auto" Padding="10,5">
+                        <Label Grid.Column="0" Text="Vendedor" FontAttributes="Bold" TextColor="Gray" />
+                        <Label Grid.Column="1" Text="Cant." FontAttributes="Bold" TextColor="Gray" WidthRequest="50" HorizontalTextAlignment="Center" />
+                        <Label Grid.Column="2" Text="Total" FontAttributes="Bold" TextColor="Gray" WidthRequest="100" HorizontalTextAlignment="End" />
+                    </Grid>
+                </CollectionView.Header>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="vm:SalesSummary">
+                        <Grid ColumnDefinitions="*, Auto, Auto" Padding="10,15">
+                            <Label Grid.Column="0" Text="{Binding VendedorNombre}" VerticalOptions="Center" FontAttributes="Bold" />
+                            <Label Grid.Column="1" Text="{Binding CantidadPedidos}" VerticalOptions="Center" WidthRequest="50" HorizontalTextAlignment="Center" />
+                            <Label Grid.Column="2" Text="{Binding TotalVendido, StringFormat='{0:C}'}" 
+                                   VerticalOptions="Center" WidthRequest="100" HorizontalTextAlignment="End" TextColor="{StaticResource Primary}" FontAttributes="Bold" />
+                        </Grid>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+            <ActivityIndicator IsRunning="{Binding IsBusy}" 
+                               IsVisible="{Binding IsBusy}"
+                               Color="{StaticResource Primary}" 
+                               HorizontalOptions="Center" />
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>
